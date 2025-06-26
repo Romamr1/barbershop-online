@@ -155,8 +155,7 @@ export const blockSlot = async (req: Request, res: Response): Promise<void> => {
         startTime: new Date(startTime),
         endTime: new Date(endTime),
         isBlocked: true,
-        isBooked: false,
-        reason: reason || 'Blocked by admin',
+        isBooked: false
       },
     });
 

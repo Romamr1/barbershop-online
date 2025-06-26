@@ -83,7 +83,9 @@ export const getBarbershops = async (req: Request, res: Response): Promise<void>
     const validatedFilters = validateSchema(barbershopFiltersSchema, req.query);
     
     const { page, limit, type, location, rating } = validatedFilters;
-    const skip = (page - 1) * limit;
+    const safePage: number = page ?? 1;
+    const safeLimit: number = limit ?? 10;
+    const skip = (safePage - 1) * safeLimit;
 
     // Build where clause
     const where: any = {};
@@ -103,7 +105,7 @@ export const getBarbershops = async (req: Request, res: Response): Promise<void>
       prisma.barberShop.findMany({
         where,
         skip,
-        take: limit,
+        take: safeLimit,
         include: {
           admins: {
             select: {
@@ -150,7 +152,7 @@ export const getBarbershops = async (req: Request, res: Response): Promise<void>
       prisma.barberShop.count({ where })
     ]);
 
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(total / safeLimit);
 
     res.json({
       success: true,
@@ -158,8 +160,8 @@ export const getBarbershops = async (req: Request, res: Response): Promise<void>
       data: {
         barbershops,
         pagination: {
-          page,
-          limit,
+          page: safePage,
+          limit: safeLimit,
           total,
           totalPages,
         }
@@ -276,14 +278,23 @@ export const updateBarbershop = async (req: Request, res: Response): Promise<voi
       throw new CustomError('Barbershop not found', 404);
     }
 
-    const isAdmin = barbershop.admins.some(admin => admin.id === req.user!.id);
+    const isAdmin = barbershop.admins.some((admin: any) => admin.id === req.user!.id);
     if (!isAdmin && req.user.role !== 'superadmin') {
       throw new CustomError('Insufficient permissions to update this barbershop', 403);
     }
 
+    // Convert images array to JSON string if present
+    const updateData: any = { ...validatedData };
+    if (updateData.images && Array.isArray(updateData.images)) {
+      updateData.images = JSON.stringify(updateData.images);
+    }
+    if (updateData.workingHours && typeof updateData.workingHours === 'object') {
+      updateData.workingHours = JSON.stringify(updateData.workingHours);
+    }
+
     const updatedBarbershop = await prisma.barberShop.update({
       where: { id },
-      data: validatedData,
+      data: updateData,
       include: {
         admins: {
           select: {
@@ -357,7 +368,7 @@ export const deleteBarbershop = async (req: Request, res: Response): Promise<voi
       throw new CustomError('Barbershop not found', 404);
     }
 
-    const isAdmin = barbershop.admins.some(admin => admin.id === req.user!.id);
+    const isAdmin = barbershop.admins.some((admin: any) => admin.id === req.user!.id);
     if (!isAdmin && req.user.role !== 'superadmin') {
       throw new CustomError('Insufficient permissions to delete this barbershop', 403);
     }

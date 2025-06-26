@@ -225,14 +225,27 @@ export const updateBarber = async (req: Request, res: Response): Promise<void> =
       throw new CustomError('Barber not found', 404);
     }
 
-    const isAdmin = barber.barberShop.admins.some(admin => admin.id === req.user!.id);
+    const isAdmin = barber.barberShop.admins.some((admin: any) => admin.id === req.user!.id);
     if (!isAdmin && req.user.role !== 'superadmin') {
       throw new CustomError('Insufficient permissions to update this barber', 403);
     }
 
+    // Convert specialties and workingHours to string if present
+    const updateData: any = { ...validatedData };
+    
+    if (updateData.specialties && Array.isArray(updateData.specialties)) {
+      updateData.specialties = JSON.stringify(updateData.specialties);
+    }
+    if (updateData.workingHours && typeof updateData.workingHours === 'object') {
+      updateData.workingHours = JSON.stringify(updateData.workingHours);
+    }
+    
+    // Remove barberShopId from update data as it shouldn't be updated
+    delete updateData.barberShopId;
+
     const updatedBarber = await prisma.barber.update({
       where: { id },
-      data: validatedData,
+      data: updateData,
       include: {
         user: {
           select: {
@@ -290,7 +303,7 @@ export const deleteBarber = async (req: Request, res: Response): Promise<void> =
       throw new CustomError('Barber not found', 404);
     }
 
-    const isAdmin = barber.barberShop.admins.some(admin => admin.id === req.user!.id);
+    const isAdmin = barber.barberShop.admins.some((admin: any) => admin.id === req.user!.id);
     if (!isAdmin && req.user.role !== 'superadmin') {
       throw new CustomError('Insufficient permissions to delete this barber', 403);
     }
