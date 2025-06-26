@@ -47,7 +47,7 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
     }
 
     // Verify barber can perform these services
-    const barberServiceIds = slot.barber.services.map(s => s.id);
+    const barberServiceIds = slot.barber.services.map((s: any) => s.id);
     const canPerformAll = validatedData.serviceIds.every(serviceId => 
       barberServiceIds.includes(serviceId)
     );
@@ -57,8 +57,8 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
     }
 
     // Calculate total price and duration
-    const totalPrice = services.reduce((sum, service) => sum + service.price, 0);
-    const totalDuration = services.reduce((sum, service) => sum + service.durationMin, 0);
+    const totalPrice = services.reduce((sum: number, service: any) => sum + service.price, 0);
+    const totalDuration = services.reduce((sum: number, service: any) => sum + service.durationMin, 0);
 
     // Verify slot duration is sufficient
     const slotDuration = Math.round((slot.endTime.getTime() - slot.startTime.getTime()) / (1000 * 60));
@@ -67,7 +67,7 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
     }
 
     // Create booking with transaction
-    const booking = await prisma.$transaction(async (tx) => {
+    const booking = await prisma.$transaction(async (tx: any) => {
       // Mark slot as booked
       await tx.slot.update({
         where: { id: validatedData.slotId },
@@ -90,7 +90,7 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
 
       // Create booking-service relationships
       await tx.bookingService.createMany({
-        data: services.map(service => ({
+        data: services.map((service: any) => ({
           bookingId: newBooking.id,
           serviceId: service.id,
           price: service.price,
@@ -131,14 +131,6 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
           }
         },
         slot: true,
-        services: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            durationMin: true,
-          }
-        }
       }
     });
 
@@ -155,7 +147,9 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
 export const getBookings = async (req: Request, res: Response): Promise<void> => {
   try {
     const validatedFilters = validateSchema(bookingFiltersSchema, req.query);
-    const { page, limit, status, barberId, barbershopId, startDate, endDate } = validatedFilters;
+    const { page: pageParam, limit: limitParam, status, barberId, barbershopId, startDate, endDate } = validatedFilters;
+    const page: number = pageParam ?? 1;
+    const limit: number = limitParam ?? 10;
     const skip = (page - 1) * limit;
 
     if (!req.user) {
@@ -211,14 +205,6 @@ export const getBookings = async (req: Request, res: Response): Promise<void> =>
             }
           },
           slot: true,
-          services: {
-            select: {
-              id: true,
-              name: true,
-              price: true,
-              durationMin: true,
-            }
-          }
         },
         orderBy: {
           createdAt: 'desc'
@@ -229,11 +215,19 @@ export const getBookings = async (req: Request, res: Response): Promise<void> =>
 
     const totalPages = Math.ceil(total / limit);
 
+    const bookingsWithDetails = bookings.map((slot: any) => ({
+      ...slot,
+      booking: slot.booking ? {
+        id: slot.booking.id,
+        status: slot.booking.status,
+      } : null,
+    }));
+
     res.json({
       success: true,
       message: 'Bookings retrieved successfully',
       data: {
-        bookings,
+        bookings: bookingsWithDetails,
         pagination: {
           page,
           limit,
@@ -285,14 +279,6 @@ export const getBookingById = async (req: Request, res: Response): Promise<void>
           }
         },
         slot: true,
-        services: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            durationMin: true,
-          }
-        }
       }
     });
 
@@ -382,14 +368,6 @@ export const updateBooking = async (req: Request, res: Response): Promise<void> 
           }
         },
         slot: true,
-        services: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            durationMin: true,
-          }
-        }
       }
     });
 
@@ -442,7 +420,7 @@ export const cancelBooking = async (req: Request, res: Response): Promise<void> 
     }
 
     // Cancel booking with transaction
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       await tx.booking.update({
         where: { id },
         data: { status: 'cancelled' }
@@ -495,12 +473,6 @@ export const getCalendar = async (req: Request, res: Response): Promise<void> =>
           select: {
             id: true,
             status: true,
-            services: {
-              select: {
-                name: true,
-                durationMin: true,
-              }
-            }
           }
         }
       },
@@ -509,7 +481,7 @@ export const getCalendar = async (req: Request, res: Response): Promise<void> =>
       }
     });
 
-    const calendarSlots = slots.map(slot => ({
+    const calendarSlots = slots.map((slot: any) => ({
       id: slot.id,
       startTime: slot.startTime.toISOString(),
       endTime: slot.endTime.toISOString(),
@@ -519,7 +491,6 @@ export const getCalendar = async (req: Request, res: Response): Promise<void> =>
       booking: slot.booking ? {
         id: slot.booking.id,
         status: slot.booking.status,
-        services: slot.booking.services,
       } : null,
     }));
 

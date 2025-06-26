@@ -49,7 +49,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       email: user.email,
       name: user.name,
       role: user.role as Role,
-      barberShopId: user.barberShopId,
+      barberShopId: user.barberShopId ?? undefined,
     };
 
     const accessToken = generateAccessToken(userPayload);
@@ -102,7 +102,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       email: user.email,
       name: user.name,
       role: user.role as Role,
-      barberShopId: user.barberShopId,
+      barberShopId: user.barberShopId ?? undefined,
     };
 
     const accessToken = generateAccessToken(userPayload);
@@ -162,7 +162,7 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
       email: user.email,
       name: user.name,
       role: user.role as Role,
-      barberShopId: user.barberShopId,
+      barberShopId: user.barberShopId ?? undefined,
     };
 
     const newAccessToken = generateAccessToken(newUserPayload);
