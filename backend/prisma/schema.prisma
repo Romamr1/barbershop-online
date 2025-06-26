@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         String   @default("client") // superadmin, admin, barber, client
+  barberShop   BarberShop? @relation("BarberShopAdmins", fields: [barberShopId], references: [id])
+  barberShopId String?
+  barber       Barber?
+  bookings     Booking[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
+}
+
+model BarberShop {
+  id          String   @id @default(uuid())
+  name        String
+  address     String
+  description String?
+  type        String   // male, female, premium, family
+  latitude    Float?
+  longitude   Float?
+  phone       String
+  email       String
+  workingHours String   // JSON string for SQLite
+  images      String   // JSON string for SQLite
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  admins      User[]   @relation("BarberShopAdmins")
+  barbers     Barber[]
+  services    Service[]
+  bookings    Booking[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("barbershops")
+}
+
+model Barber {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   @unique
+  barberShop  BarberShop @relation(fields: [barberShopId], references: [id], onDelete: Cascade)
+  barberShopId String
+  bio         String?
+  avatar      String?
+  specialties String   // JSON string for SQLite
+  workingHours String  // JSON string for SQLite
+  services    Service[] @relation("BarberServices")
+  slots       Slot[]
+  bookings    Booking[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("barbers")
+}
+
+model Service {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  price         Float
+  durationMin   Int
+  category      String?
+  barberShop    BarberShop @relation(fields: [barberShopId], references: [id], onDelete: Cascade)
+  barberShopId  String
+  barbers       Barber[]   @relation("BarberServices")
+  bookingServices BookingService[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("services")
+}
+
+model Slot {
+  id         String   @id @default(uuid())
+  barber     Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  barberId   String
+  startTime  DateTime
+  endTime    DateTime
+  isBlocked  Boolean  @default(false)
+  isBooked   Boolean  @default(false)
+  booking    Booking?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("slots")
+}
+
+model Booking {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  barber     Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  barberId   String
+  barberShop BarberShop @relation(fields: [barberShopId], references: [id], onDelete: Cascade)
+  barberShopId String
+  slot       Slot     @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  slotId     String   @unique
+  bookingServices BookingService[]
+  totalPrice Float
+  totalDuration Int
+  status     String   @default("pending") // pending, confirmed, completed, cancelled
+  phone      String
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("bookings")
+}
+
+// Many-to-many relationship between Booking and Service
+model BookingService {
+  id        String   @id @default(uuid())
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  bookingId String
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId String
+  price     Float
+  duration  Int
+
+  @@unique([bookingId, serviceId])
+  @@map("booking_services")
+} 
