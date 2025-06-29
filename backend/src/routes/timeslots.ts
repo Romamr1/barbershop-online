@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getAvailableSlots, blockSlot, unblockSlot } from '@/controllers/timeslotController.js';
-import { requireAuth, requireRole } from '@/middlewares/auth.js';
+import { getAvailableSlots, blockSlot, unblockSlot } from '../controllers/timeslotController';
+import { requireAuth, requireRole } from '../middlewares/auth';
 
 const router = Router();
 

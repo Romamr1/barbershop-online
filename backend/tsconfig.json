@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "allowJs": true,
@@ -12,17 +12,17 @@
     "rootDir": "./src",
     "removeComments": true,
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/controllers/*": ["./src/controllers/*"],
-      "@/routes/*": ["./src/routes/*"],
-      "@/middlewares/*": ["./src/middlewares/*"],
-      "@/services/*": ["./src/services/*"],
-      "@/prisma/*": ["./src/prisma/*"],
-      "@/types/*": ["./src/types/*"],
-      "@/utils/*": ["./src/utils/*"],
-      "@/config/*": ["./src/config/*"]
+      "@/*": ["./*"],
+      "@/controllers/*": ["./controllers/*"],
+      "@/routes/*": ["./routes/*"],
+      "@/middlewares/*": ["./middlewares/*"],
+      "@/services/*": ["./services/*"],
+      "@/prisma/*": ["./prisma/*"],
+      "@/types/*": ["./types/*"],
+      "@/utils/*": ["./utils/*"],
+      "@/config/*": ["./config/*"]
     },
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

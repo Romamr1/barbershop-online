@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import * as barbershopController from '@/controllers/barbershopController.js';
-import { requireAuth, requireAdmin, requireSuperAdmin } from '@/middlewares/auth.js';
-import { asyncHandler } from '@/middlewares/errorHandler.js';
+import * as barbershopController from '../controllers/barbershopController';
+import { requireAuth, requireAdmin, requireSuperAdmin } from '../middlewares/auth';
+import { asyncHandler } from '../middlewares/errorHandler';
 
 const router = Router();
 

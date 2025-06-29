@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { requireAuth } from '@/middlewares/auth.js';
-import { requireRole } from '@/middlewares/auth.js';
+import { requireAuth } from '../middlewares/auth';
+import { requireRole } from '../middlewares/auth';
 import {
   createService,
   getServices,
   getServiceById,
   updateService,
-  deleteService,
-} from '@/controllers/serviceController.js';
+  deleteService
+} from '../controllers/serviceController';
 
 const router = Router();
 

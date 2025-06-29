@@ -3,18 +3,19 @@
   "version": "1.0.0",
   "description": "REST API for Barbershop Booking Marketplace",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "./node_modules/.bin/tsc",
+    "build": "npx tsc",
     "start": "node dist/index.js",
+    "start:dev": "node -r tsconfig-paths/register dist/index.js",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx src/prisma/seed.ts",
     "db:studio": "prisma studio",
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix",
+    "db:reset": "prisma migrate reset",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -42,6 +43,7 @@
     "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",
     "prisma": "^5.7.1",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.6.2",
     "typescript": "^5.8.3"
   },

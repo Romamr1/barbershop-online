@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { prisma } from '@/prisma/client.js';
-import { validateSchema } from '@/utils/validation.js';
-import { createBookingSchema, updateBookingSchema, bookingFiltersSchema } from '@/utils/validation.js';
-import { CustomError } from '@/middlewares/errorHandler.js';
+import { prisma } from '../prisma/client';
+import { validateSchema } from '../utils/validation';
+import { createBookingSchema, updateBookingSchema, bookingFiltersSchema } from '../utils/validation';
+import { CustomError } from '../middlewares/errorHandler';
 import { addMinutes, isAfter, isBefore, parseISO } from 'date-fns';
 
 export const createBooking = async (req: Request, res: Response): Promise<void> => {

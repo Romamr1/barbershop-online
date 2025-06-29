@@ -3,16 +3,16 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
-import { config } from '@/config/index.js';
-import { errorHandler, notFoundHandler } from '@/middlewares/errorHandler.js';
+import { config } from './config';
+import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 
 // Import routes
-import authRoutes from '@/routes/auth.js';
-import barbershopRoutes from '@/routes/barbershops.js';
-import bookingRoutes from '@/routes/bookings.js';
-import barberRoutes from '@/routes/barbers.js';
-import serviceRoutes from '@/routes/services.js';
-import timeslotRoutes from '@/routes/timeslots.js';
+import authRoutes from './routes/auth';
+import barbershopRoutes from './routes/barbershops';
+import bookingRoutes from './routes/bookings';
+import barberRoutes from './routes/barbers';
+import serviceRoutes from './routes/services';
+import timeslotRoutes from './routes/timeslots';
 
 const app = express();
 

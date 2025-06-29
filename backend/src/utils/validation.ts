@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Role } from '@/types/index.js';
+import { Role } from '../types';
 
 // User validation schemas
 export const loginSchema = z.object({

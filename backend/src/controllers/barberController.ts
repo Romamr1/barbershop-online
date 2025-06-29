@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { prisma } from '@/prisma/client.js';
-import { validateSchema } from '@/utils/validation.js';
-import { createBarberSchema, updateBarberSchema } from '@/utils/validation.js';
-import { CustomError } from '@/middlewares/errorHandler.js';
+import { prisma } from '../prisma/client';
+import { validateSchema } from '../utils/validation';
+import { createBarberSchema, updateBarberSchema } from '../utils/validation';
+import { CustomError } from '../middlewares/errorHandler';
 
 export const createBarber = async (req: Request, res: Response): Promise<void> => {
   try {
