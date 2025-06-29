@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { prisma } from '@/prisma/client.js';
-import { validateSchema } from '@/utils/validation.js';
-import { createServiceSchema, updateServiceSchema } from '@/utils/validation.js';
-import { CustomError } from '@/middlewares/errorHandler.js';
+import { prisma } from '../prisma/client';
+import { validateSchema } from '../utils/validation';
+import { createServiceSchema, updateServiceSchema } from '../utils/validation';
+import { CustomError } from '../middlewares/errorHandler';
 
 export const createService = async (req: Request, res: Response): Promise<void> => {
   try {

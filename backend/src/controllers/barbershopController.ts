@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { prisma } from '@/prisma/client.js';
-import { validateSchema, validateSchemaSafe } from '@/utils/validation.js';
-import { createBarbershopSchema, updateBarbershopSchema, barbershopFiltersSchema } from '@/utils/validation.js';
-import { CustomError } from '@/middlewares/errorHandler.js';
-import { Role } from '@/types/index.js';
+import { prisma } from '../prisma/client';
+import { validateSchema, validateSchemaSafe } from '../utils/validation';
+import { createBarbershopSchema, updateBarbershopSchema, barbershopFiltersSchema } from '../utils/validation';
+import { CustomError } from '../middlewares/errorHandler';
+import { Role } from '../types';
 
 export const createBarbershop = async (req: Request, res: Response): Promise<void> => {
   try {

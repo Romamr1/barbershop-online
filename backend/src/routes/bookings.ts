@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import * as bookingController from '@/controllers/bookingController.js';
-import { requireAuth } from '@/middlewares/auth.js';
-import { asyncHandler } from '@/middlewares/errorHandler.js';
+import * as bookingController from '../controllers/bookingController';
+import { requireAuth } from '../middlewares/auth';
+import { asyncHandler } from '../middlewares/errorHandler';
 
 const router = Router();
 

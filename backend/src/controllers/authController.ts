@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { prisma } from '@/prisma/client.js';
-import { hashPassword, verifyPassword } from '@/utils/password.js';
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '@/utils/jwt.js';
-import { validateSchema } from '@/utils/validation.js';
-import { loginSchema, registerSchema } from '@/utils/validation.js';
-import { config } from '@/config/index.js';
-import { CustomError } from '@/middlewares/errorHandler.js';
-import { Role } from '@/types/index.js';
+import { prisma } from '../prisma/client';
+import { hashPassword, verifyPassword } from '../utils/password';
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt';
+import { validateSchema } from '../utils/validation';
+import { loginSchema, registerSchema } from '../utils/validation';
+import { config } from '../config';
+import { CustomError } from '../middlewares/errorHandler';
+import { Role } from '../types';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {

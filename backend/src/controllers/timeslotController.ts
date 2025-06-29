@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { prisma } from '@/prisma/client.js';
-import { CustomError } from '@/middlewares/errorHandler.js';
+import { prisma } from '../prisma/client';
+import { CustomError } from '../middlewares/errorHandler';
 
 export const getAvailableSlots = async (req: Request, res: Response): Promise<void> => {
   try {
