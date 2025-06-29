@@ -1,6 +1,12 @@
 import { ApiResponse, PaginatedResponse } from '@/types';
+import { config } from './config';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = config.api.baseUrl;
+
+// Log the API base URL in development for debugging
+if (process.env.NODE_ENV === 'development') {
+  console.log('🌐 API Base URL:', API_BASE_URL);
+}
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {

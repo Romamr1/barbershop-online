@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
+import EnvironmentInfo from '@/components/EnvironmentInfo'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-primary-900 text-white min-h-screen`}>
         {children}
+        <EnvironmentInfo />
         <Toaster
           position="top-right"
           toastOptions={{
