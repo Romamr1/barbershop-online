@@ -23,7 +23,7 @@ export default function AdminDashboard() {
         bookingApi.getAll(),
       ]);
 
-      setBarbershops(barbershopsRes.data);
+      setBarbershops(barbershopsRes.data.barbershops);
       setBookings(bookingsRes.data);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                       <td className="p-4 text-white">{booking.barbershop.name}</td>
-                      <td className="p-4 text-white">{booking.barber.name}</td>
+                      <td className="p-4 text-white">{booking.barber.user?.name || 'Unknown'}</td>
                       <td className="p-4">
                         <p className="text-white">
                           {new Date(booking.startTime).toLocaleDateString()}

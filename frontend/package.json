@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:local": "NEXT_PUBLIC_API_URL=http://localhost:3001/api next dev",
     "build": "next build",
+    "build:prod": "NEXT_PUBLIC_API_URL=https://barbershop-online-production.up.railway.app/api next build",
     "start": "next start",
+    "start:prod": "NEXT_PUBLIC_API_URL=https://barbershop-online-production.up.railway.app/api next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit"
   },

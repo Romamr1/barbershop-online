@@ -111,7 +111,7 @@ export default function BookingsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                       <div>
                         <span className="text-primary-400 text-sm">Barber</span>
-                        <p className="text-white font-medium">{booking.barber.name}</p>
+                        <p className="text-white font-medium">{booking.barber.user?.name || 'Unknown'}</p>
                       </div>
                       <div>
                         <span className="text-primary-400 text-sm">Date & Time</span>

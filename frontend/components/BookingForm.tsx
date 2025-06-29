@@ -24,7 +24,7 @@ export default function BookingForm({ barbershop, barbers, services, onClose }: 
   const [loading, setLoading] = useState(false);
 
   const totalPrice = selectedServices.reduce((sum, service) => sum + service.price, 0);
-  const totalDuration = selectedServices.reduce((sum, service) => sum + service.duration, 0);
+  const totalDuration = selectedServices.reduce((sum, service) => sum + service.durationMin, 0);
 
   useEffect(() => {
     if (selectedBarber && selectedDate) {
@@ -129,17 +129,17 @@ export default function BookingForm({ barbershop, barbers, services, onClose }: 
                         {barber.avatar ? (
                           <img
                             src={barber.avatar}
-                            alt={barber.name}
+                            alt={barber.user?.name || 'Unknown Barber'}
                             className="w-full h-full rounded-full object-cover"
                           />
                         ) : (
                           <span className="text-lg font-bold text-white">
-                            {barber.name.charAt(0).toUpperCase()}
+                            {barber.user?.name?.charAt(0).toUpperCase() || 'B'}
                           </span>
                         )}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">{barber.name}</h4>
+                        <h4 className="font-semibold text-white">{barber.user?.name || 'Unknown Barber'}</h4>
                         <p className="text-primary-400 text-sm">{barber.bio}</p>
                       </div>
                     </div>
@@ -182,7 +182,7 @@ export default function BookingForm({ barbershop, barbers, services, onClose }: 
                       </div>
                       <div className="text-right">
                         <div className="text-accent-400 font-semibold">${service.price}</div>
-                        <div className="text-primary-400 text-sm">{service.duration} min</div>
+                        <div className="text-primary-400 text-sm">{service.durationMin} min</div>
                       </div>
                     </div>
                   </label>
@@ -318,7 +318,7 @@ export default function BookingForm({ barbershop, barbers, services, onClose }: 
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-primary-400">Barber:</span>
-                    <span className="text-white">{selectedBarber?.name}</span>
+                    <span className="text-white">{selectedBarber?.user?.name}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-primary-400">Services:</span>
