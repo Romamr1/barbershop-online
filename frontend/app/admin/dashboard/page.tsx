@@ -24,16 +24,28 @@ export default function AdminDashboard() {
       ]);
 
       setBarbershops(barbershopsRes.data.barbershops);
-      setBookings(bookingsRes.data);
+      const bookingsData = bookingsRes as any;
+      setBookings(bookingsData.data?.bookings || []);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
       toast.error('Failed to load dashboard data');
+      setBookings([]);
+      setBarbershops([]);
     } finally {
       setLoading(false);
     }
   };
 
   const getStats = () => {
+    if (!Array.isArray(bookings)) {
+      return {
+        totalBookings: 0,
+        pendingBookings: 0,
+        completedBookings: 0,
+        totalRevenue: 0,
+      };
+    }
+
     const totalBookings = bookings.length;
     const pendingBookings = bookings.filter(b => b.status === 'pending').length;
     const completedBookings = bookings.filter(b => b.status === 'completed').length;
@@ -150,22 +162,22 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {bookings.slice(0, 10).map((booking) => (
+                  {Array.isArray(bookings) && bookings.slice(0, 10).map((booking) => (
                     <tr key={booking.id} className="border-b border-primary-700">
                       <td className="p-4">
                         <div>
-                          <p className="text-white font-medium">{booking.client.name}</p>
-                          <p className="text-primary-400 text-sm">{booking.clientPhone}</p>
+                          <p className="text-white font-medium">{booking.client?.name || 'Unknown'}</p>
+                          <p className="text-primary-400 text-sm">{booking.clientPhone || 'N/A'}</p>
                         </div>
                       </td>
-                      <td className="p-4 text-white">{booking.barbershop.name}</td>
-                      <td className="p-4 text-white">{booking.barber.user?.name || 'Unknown'}</td>
+                      <td className="p-4 text-white">{booking.barbershop?.name || 'Unknown'}</td>
+                      <td className="p-4 text-white">{booking.barber?.user?.name || 'Unknown'}</td>
                       <td className="p-4">
                         <p className="text-white">
-                          {new Date(booking.startTime).toLocaleDateString()}
+                          {booking.startTime ? new Date(booking.startTime).toLocaleDateString() : 'N/A'}
                         </p>
                         <p className="text-primary-400 text-sm">
-                          {new Date(booking.startTime).toLocaleTimeString()}
+                          {booking.startTime ? new Date(booking.startTime).toLocaleTimeString() : 'N/A'}
                         </p>
                       </td>
                       <td className="p-4">
@@ -175,12 +187,19 @@ export default function AdminDashboard() {
                           booking.status === 'completed' ? 'bg-blue-600 text-white' :
                           'bg-red-600 text-white'
                         }`}>
-                          {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                          {booking.status ? booking.status.charAt(0).toUpperCase() + booking.status.slice(1) : 'Unknown'}
                         </span>
                       </td>
-                      <td className="p-4 text-accent-400 font-semibold">${booking.totalPrice}</td>
+                      <td className="p-4 text-accent-400 font-semibold">${booking.totalPrice || 0}</td>
                     </tr>
                   ))}
+                  {(!Array.isArray(bookings) || bookings.length === 0) && (
+                    <tr>
+                      <td colSpan={6} className="p-4 text-center text-primary-400">
+                        No bookings found
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -191,17 +210,17 @@ export default function AdminDashboard() {
         <div>
           <h2 className="text-2xl font-bold text-white mb-4">Barbershops</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {barbershops.map((barbershop) => (
+            {Array.isArray(barbershops) && barbershops.map((barbershop) => (
               <div key={barbershop.id} className="card p-6">
-                <h3 className="text-lg font-semibold text-white mb-2">{barbershop.name}</h3>
-                <p className="text-primary-400 text-sm mb-4">{barbershop.address}</p>
+                <h3 className="text-lg font-semibold text-white mb-2">{barbershop.name || 'Unknown'}</h3>
+                <p className="text-primary-400 text-sm mb-4">{barbershop.address || 'No address'}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <span className="px-2 py-1 bg-accent-600 text-white text-xs rounded-full">
-                      {barbershop.type}
+                      {barbershop.type || 'Unknown'}
                     </span>
                     <span className="text-primary-400 text-sm">
-                      ⭐ {barbershop.rating.toFixed(1)}
+                      ⭐ {barbershop.rating ? barbershop.rating.toFixed(1) : '0.0'}
                     </span>
                   </div>
                   <a
@@ -213,6 +232,11 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ))}
+            {(!Array.isArray(barbershops) || barbershops.length === 0) && (
+              <div className="col-span-full text-center text-primary-400 py-8">
+                No barbershops found
+              </div>
+            )}
           </div>
         </div>
       </main>

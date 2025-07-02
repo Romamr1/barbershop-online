@@ -55,6 +55,9 @@
     "typescript",
     "prisma"
   ],
+  "prisma": {
+    "seed": "tsx src/prisma/seed.ts"
+  },
   "author": "Barbershop Booking Team",
   "license": "MIT"
 }

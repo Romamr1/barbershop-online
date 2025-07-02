@@ -62,11 +62,10 @@ export default function BookingForm({ barbershop, barbers, services, onClose }: 
 
     try {
       await bookingApi.create({
-        barbershopId: barbershop.id,
         barberId: selectedBarber.id,
         serviceIds: selectedServices.map(s => s.id),
-        date: selectedDate,
-        timeSlot: selectedTimeSlot.startTime,
+        startTime: selectedTimeSlot.startTime,
+        endTime: selectedTimeSlot.endTime,
         phone,
         notes: notes || undefined,
       });

@@ -5,11 +5,13 @@ import { asyncHandler } from '../middlewares/errorHandler';
 
 const router = Router();
 
-// All booking routes require authentication
+// Allow guest booking creation
+router.post('/', asyncHandler(bookingController.createBooking));
+
+// The rest require authentication
 router.use(requireAuth);
 
 // Booking management
-router.post('/', asyncHandler(bookingController.createBooking));
 router.get('/', asyncHandler(bookingController.getBookings));
 router.get('/:id', asyncHandler(bookingController.getBookingById));
 router.put('/:id', asyncHandler(bookingController.updateBooking));

@@ -18,29 +18,36 @@ export default function BarberDashboard() {
     try {
       setLoading(true);
       const response = await bookingApi.getAll();
-      // Filter bookings for current barber (in real app, this would be filtered by barber ID)
-      setBookings(response.data);
+      // The backend returns { data: { bookings: [...], pagination: {...} } }
+      const bookingsData = response as any;
+      setBookings(bookingsData.data?.bookings || []);
     } catch (error) {
       console.error('Error loading bookings:', error);
       toast.error('Failed to load bookings');
+      setBookings([]);
     } finally {
       setLoading(false);
     }
   };
 
   const getUpcomingBookings = () => {
+    if (!Array.isArray(bookings)) return [];
+    
     const now = new Date();
     return bookings.filter(booking => 
-      new Date(booking.startTime) > now && booking.status !== 'cancelled'
+      booking.startTime && new Date(booking.startTime) > now && booking.status !== 'cancelled'
     ).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
   };
 
   const getTodayBookings = () => {
+    if (!Array.isArray(bookings)) return [];
+    
     const today = new Date();
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
     
     return bookings.filter(booking => {
+      if (!booking.startTime) return false;
       const bookingDate = new Date(booking.startTime);
       return bookingDate >= todayStart && bookingDate < todayEnd && booking.status !== 'cancelled';
     }).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
@@ -112,10 +119,10 @@ export default function BarberDashboard() {
               <div className="ml-4">
                 <p className="text-primary-400 text-sm">Completed Today</p>
                 <p className="text-2xl font-bold text-white">
-                  {bookings.filter(b => 
-                    new Date(b.startTime).toDateString() === new Date().toDateString() && 
+                  {Array.isArray(bookings) ? bookings.filter(b => 
+                    b.startTime && new Date(b.startTime).toDateString() === new Date().toDateString() && 
                     b.status === 'completed'
-                  ).length}
+                  ).length : 0}
                 </p>
               </div>
             </div>
@@ -143,27 +150,27 @@ export default function BarberDashboard() {
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center">
                         <span className="text-lg font-bold text-white">
-                          {booking.client.name.charAt(0).toUpperCase()}
+                          {booking.client?.name?.charAt(0).toUpperCase() || '?'}
                         </span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white">{booking.client.name}</h3>
-                        <p className="text-primary-400">{booking.clientPhone}</p>
+                        <h3 className="text-lg font-semibold text-white">{booking.client?.name || 'Unknown Client'}</h3>
+                        <p className="text-primary-400">{booking.clientPhone || 'No phone'}</p>
                         <p className="text-primary-300 text-sm">
-                          {booking.services.map(s => s.name).join(', ')}
+                          {Array.isArray(booking.services) ? booking.services.map(s => s.name).join(', ') : 'No services'}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-xl font-bold text-white">
-                        {new Date(booking.startTime).toLocaleTimeString('en-US', {
+                        {booking.startTime ? new Date(booking.startTime).toLocaleTimeString('en-US', {
                           hour: 'numeric',
                           minute: '2-digit',
                           hour12: true
-                        })}
+                        }) : 'N/A'}
                       </p>
-                      <p className="text-primary-400 text-sm">{booking.totalDuration} min</p>
-                      <p className="text-accent-400 font-semibold">${booking.totalPrice}</p>
+                      <p className="text-primary-400 text-sm">{booking.totalDuration || 0} min</p>
+                      <p className="text-accent-400 font-semibold">${booking.totalPrice || 0}</p>
                     </div>
                   </div>
                   {booking.notes && (
@@ -200,32 +207,32 @@ export default function BarberDashboard() {
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center">
                         <span className="text-lg font-bold text-white">
-                          {booking.client.name.charAt(0).toUpperCase()}
+                          {booking.client?.name?.charAt(0).toUpperCase() || '?'}
                         </span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white">{booking.client.name}</h3>
-                        <p className="text-primary-400">{booking.clientPhone}</p>
+                        <h3 className="text-lg font-semibold text-white">{booking.client?.name || 'Unknown Client'}</h3>
+                        <p className="text-primary-400">{booking.clientPhone || 'No phone'}</p>
                         <p className="text-primary-300 text-sm">
-                          {new Date(booking.startTime).toLocaleDateString('en-US', {
+                          {booking.startTime ? new Date(booking.startTime).toLocaleDateString('en-US', {
                             weekday: 'long',
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
-                          })}
+                          }) : 'No date'}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-xl font-bold text-white">
-                        {new Date(booking.startTime).toLocaleTimeString('en-US', {
+                        {booking.startTime ? new Date(booking.startTime).toLocaleTimeString('en-US', {
                           hour: 'numeric',
                           minute: '2-digit',
                           hour12: true
-                        })}
+                        }) : 'N/A'}
                       </p>
-                      <p className="text-primary-400 text-sm">{booking.totalDuration} min</p>
-                      <p className="text-accent-400 font-semibold">${booking.totalPrice}</p>
+                      <p className="text-primary-400 text-sm">{booking.totalDuration || 0} min</p>
+                      <p className="text-accent-400 font-semibold">${booking.totalPrice || 0}</p>
                     </div>
                   </div>
                 </div>

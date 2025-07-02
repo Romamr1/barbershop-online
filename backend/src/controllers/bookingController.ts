@@ -9,36 +9,51 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
   try {
     const validatedData = validateSchema(createBookingSchema, req.body);
 
-    if (!req.user) {
-      throw new CustomError('Authentication required', 401);
-    }
+    // Allow guest bookings - userId is optional
 
-    // Get the slot and verify it's available
-    const slot = await prisma.slot.findUnique({
-      where: { id: validatedData.slotId },
+    // Get the barber and verify availability
+    const barber = await prisma.barber.findUnique({
+      where: { id: validatedData.barberId },
       include: {
-        barber: {
-          include: {
-            barberShop: true,
-            services: true,
-          }
-        }
+        barberShop: true,
+        services: true,
       }
     });
 
-    if (!slot) {
-      throw new CustomError('Slot not found', 404);
+    if (!barber) {
+      throw new CustomError('Barber not found', 404);
     }
 
-    if (slot.isBooked || slot.isBlocked) {
-      throw new CustomError('Slot is not available', 400);
+    // Check if the time slot is available
+    const startTime = new Date(validatedData.startTime);
+    const endTime = new Date(validatedData.endTime);
+
+    // Check for conflicting bookings
+    const conflictingSlot = await prisma.slot.findFirst({
+      where: {
+        barberId: validatedData.barberId,
+        startTime: {
+          lt: endTime,
+        },
+        endTime: {
+          gt: startTime,
+        },
+        OR: [
+          { isBooked: true },
+          { isBlocked: true }
+        ]
+      }
+    });
+
+    if (conflictingSlot) {
+      throw new CustomError('Selected time slot is not available', 400);
     }
 
     // Get services and calculate total
     const services = await prisma.service.findMany({
       where: {
         id: { in: validatedData.serviceIds },
-        barberShopId: slot.barber.barberShopId,
+        barberShopId: barber.barberShopId,
       }
     });
 
@@ -47,7 +62,7 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
     }
 
     // Verify barber can perform these services
-    const barberServiceIds = slot.barber.services.map((s: any) => s.id);
+    const barberServiceIds = barber.services.map((s: any) => s.id);
     const canPerformAll = validatedData.serviceIds.every(serviceId => 
       barberServiceIds.includes(serviceId)
     );
@@ -61,26 +76,31 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
     const totalDuration = services.reduce((sum: number, service: any) => sum + service.durationMin, 0);
 
     // Verify slot duration is sufficient
-    const slotDuration = Math.round((slot.endTime.getTime() - slot.startTime.getTime()) / (1000 * 60));
+    const slotDuration = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
     if (slotDuration < totalDuration) {
       throw new CustomError('Slot duration is insufficient for selected services', 400);
     }
 
     // Create booking with transaction
     const booking = await prisma.$transaction(async (tx: any) => {
-      // Mark slot as booked
-      await tx.slot.update({
-        where: { id: validatedData.slotId },
-        data: { isBooked: true }
+      // Create the slot
+      const newSlot = await tx.slot.create({
+        data: {
+          barberId: validatedData.barberId,
+          startTime,
+          endTime,
+          isBooked: true,
+          isBlocked: false,
+        }
       });
 
       // Create booking
       const newBooking = await tx.booking.create({
         data: {
-          userId: req.user!.id,
+          userId: req.user?.id || null, // Allow null for guest bookings
           barberId: validatedData.barberId,
-          barberShopId: slot.barber.barberShopId,
-          slotId: validatedData.slotId,
+          barberShopId: barber.barberShopId,
+          slotId: newSlot.id,
           totalPrice,
           totalDuration,
           phone: validatedData.phone,
@@ -131,6 +151,11 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
           }
         },
         slot: true,
+        bookingServices: {
+          include: {
+            service: true
+          }
+        }
       }
     });
 
@@ -162,7 +187,16 @@ export const getBookings = async (req: Request, res: Response): Promise<void> =>
     if (req.user.role === 'client') {
       where.userId = req.user.id;
     } else if (req.user.role === 'barber') {
-      where.barberId = req.user.id;
+      // For barbers, we need to find their Barber record first
+      const barber = await prisma.barber.findUnique({
+        where: { userId: req.user.id }
+      });
+      
+      if (!barber) {
+        throw new CustomError('Barber profile not found', 404);
+      }
+      
+      where.barberId = barber.id;
     } else if (req.user.role === 'admin' && req.user.barberShopId) {
       where.barberShopId = req.user.barberShopId;
     }
@@ -205,6 +239,11 @@ export const getBookings = async (req: Request, res: Response): Promise<void> =>
             }
           },
           slot: true,
+          bookingServices: {
+            include: {
+              service: true
+            }
+          }
         },
         orderBy: {
           createdAt: 'desc'
@@ -215,12 +254,13 @@ export const getBookings = async (req: Request, res: Response): Promise<void> =>
 
     const totalPages = Math.ceil(total / limit);
 
-    const bookingsWithDetails = bookings.map((slot: any) => ({
-      ...slot,
-      booking: slot.booking ? {
-        id: slot.booking.id,
-        status: slot.booking.status,
-      } : null,
+    const bookingsWithDetails = bookings.map((booking: any) => ({
+      ...booking,
+      client: booking.user,
+      clientPhone: booking.phone,
+      services: booking.bookingServices?.map((bs: any) => bs.service) || [],
+      startTime: booking.slot?.startTime,
+      endTime: booking.slot?.endTime,
     }));
 
     res.json({

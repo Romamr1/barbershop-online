@@ -36,10 +36,10 @@ app.use(cors({
   credentials: true,
 }));
 
-// Rate limiting
+// Rate limiting - more lenient in development
 const limiter = rateLimit({
-  windowMs: config.rateLimit.windowMs,
-  max: config.rateLimit.maxRequests,
+  windowMs: config.server.isDevelopment ? 60000 : config.rateLimit.windowMs, // 1 minute in dev, 15 minutes in prod
+  max: config.server.isDevelopment ? 1000 : config.rateLimit.maxRequests, // 1000 requests per minute in dev
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again later.',

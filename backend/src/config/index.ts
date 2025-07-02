@@ -14,15 +14,15 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(1, 'JWT_REFRESH_SECRET is required'),
   
   // Server Configuration
-  PORT: z.string().transform(Number).default('3001'),
+  PORT: z.string().transform(Number).default('3000'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   
   // CORS
   CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:3002'),
   
   // Rate Limiting
-  RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default('900000'),
-  RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default('100'),
+  RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default('60000'),
+  RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default('1000'),
   
   // Cookie Settings
   COOKIE_SECRET: z.string().min(1, 'COOKIE_SECRET is required'),

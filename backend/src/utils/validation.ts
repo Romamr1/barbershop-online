@@ -60,7 +60,8 @@ export const updateBarberSchema = createBarberSchema.partial();
 export const createBookingSchema = z.object({
   barberId: z.string().uuid('Invalid barber ID'),
   serviceIds: z.array(z.string().uuid('Invalid service ID')).min(1, 'At least one service is required'),
-  slotId: z.string().uuid('Invalid slot ID'),
+  startTime: z.string().datetime('Invalid start time'),
+  endTime: z.string().datetime('Invalid end time'),
   phone: z.string().min(10, 'Phone number must be at least 10 characters'),
   notes: z.string().optional(),
 });

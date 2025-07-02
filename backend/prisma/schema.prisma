@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -104,8 +104,8 @@ model Slot {
 
 model Booking {
   id         String   @id @default(uuid())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?
   barber     Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
   barberId   String
   barberShop BarberShop @relation(fields: [barberShopId], references: [id], onDelete: Cascade)
