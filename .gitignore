@@ -10,3 +10,4 @@ backend/public
 backend/uploads
 backend/uploads/images
 backend/uploads/images/barbershops
+node_modules/
