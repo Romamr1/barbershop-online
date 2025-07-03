@@ -2,7 +2,7 @@
 
 import { useTranslation } from '@/lib/useTranslation-simple';
 import { useEffect, useState } from 'react';
-import '../i18n-simple'; // Import to ensure i18n is initialized
+import '@/lib/i18n-simple'; // Import to ensure i18n is initialized
 
 export default function TestI18nSimplePage() {
   const { t, i18n, ready } = useTranslation();
