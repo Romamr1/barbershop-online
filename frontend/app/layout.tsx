@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
 import EnvironmentInfo from '@/components/EnvironmentInfo'
+import I18nProvider from '@/components/I18nProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,35 +18,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} bg-primary-900 text-white min-h-screen`}>
-        {children}
-        <EnvironmentInfo />
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#1e293b',
-              color: '#fff',
-              border: '1px solid #475569',
-            },
-            success: {
-              iconTheme: {
-                primary: '#10b981',
-                secondary: '#fff',
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
-              },
-            },
-          }}
-        />
-      </body>
-    </html>
-  )
+  return children;
 } 
