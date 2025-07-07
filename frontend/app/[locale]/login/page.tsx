@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/lib/api';
 import { setCurrentUser } from '@/lib/auth';
+import { useLocale } from '@/lib/locale-context';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { locale } = useLocale();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -23,7 +25,7 @@ export default function LoginPage() {
       const response = await authApi.login(formData.email, formData.password);
       setCurrentUser(response.data.user);
       toast.success('Login successful!');
-      router.push('/');
+      router.push(`/${locale}`);
     } catch (error: any) {
       console.error('Login error:', error);
       toast.error(error.message || 'Login failed');
@@ -51,7 +53,7 @@ export default function LoginPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-primary-400">
             Or{' '}
-            <Link href="/register" className="font-medium text-accent-400 hover:text-accent-300">
+            <Link href={`/${locale}/register`} className="font-medium text-accent-400 hover:text-accent-300">
               create a new account
             </Link>
           </p>
@@ -107,7 +109,7 @@ export default function LoginPage() {
           </div>
 
           <div className="text-center">
-            <Link href="/forgot-password" className="text-sm text-accent-400 hover:text-accent-300">
+            <Link href={`/${locale}/forgot-password`} className="text-sm text-accent-400 hover:text-accent-300">
               Forgot your password?
             </Link>
           </div>

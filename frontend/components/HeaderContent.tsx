@@ -7,10 +7,12 @@ import { getCurrentUser, setCurrentUser } from '@/lib/auth';
 import { authApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useTranslation } from '@/lib/useTranslation';
+import { useLocale } from '@/lib/locale-context';
 import LanguageSwitcher from './LanguageSwitcher';
 
 export default function HeaderContent() {
   const { t } = useTranslation();
+  const { locale } = useLocale();
   const [user, setUser] = useState<User | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -35,7 +37,7 @@ export default function HeaderContent() {
     <div className="container mx-auto px-4">
       <div className="flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
+        <Link href={`/${locale}`} className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-lg">B</span>
           </div>
@@ -44,23 +46,23 @@ export default function HeaderContent() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <Link href="/" className="text-primary-300 hover:text-white transition-colors">
+          <Link href={`/${locale}`} className="text-primary-300 hover:text-white transition-colors">
             {t('home') as string}
           </Link>
           {user && (
             <>
               {user.role === 'client' && (
-                <Link href="/bookings" className="text-primary-300 hover:text-white transition-colors">
+                <Link href={`/${locale}/bookings`} className="text-primary-300 hover:text-white transition-colors">
                   {t('my_bookings') as string}
                 </Link>
               )}
               {user.role === 'barber' && (
-                <Link href="/barber/dashboard" className="text-primary-300 hover:text-white transition-colors">
+                <Link href={`/${locale}/barber/dashboard`} className="text-primary-300 hover:text-white transition-colors">
                   {t('dashboard') as string}
                 </Link>
               )}
               {user.role === 'admin' && (
-                <Link href="/admin/dashboard" className="text-primary-300 hover:text-white transition-colors">
+                <Link href={`/${locale}/admin/dashboard`} className="text-primary-300 hover:text-white transition-colors">
                   {t('admin') as string}
                 </Link>
               )}
@@ -101,10 +103,10 @@ export default function HeaderContent() {
             </div>
           ) : (
             <div className="flex items-center space-x-4">
-              <Link href="/login" className="btn-outline">
+              <Link href={`/${locale}/login`} className="btn-outline">
                 {t('login') as string}
               </Link>
-              <Link href="/register" className="btn-primary">
+              <Link href={`/${locale}/register`} className="btn-primary">
                 {t('register') as string}
               </Link>
             </div>
@@ -126,23 +128,23 @@ export default function HeaderContent() {
       {isMenuOpen && (
         <div className="md:hidden py-4 border-t border-primary-700">
           <nav className="flex flex-col space-y-4">
-            <Link href="/" className="text-primary-300 hover:text-white transition-colors">
+            <Link href={`/${locale}`} className="text-primary-300 hover:text-white transition-colors">
               {t('home') as string}
             </Link>
             {user && (
               <>
                 {user.role === 'client' && (
-                  <Link href="/bookings" className="text-primary-300 hover:text-white transition-colors">
+                  <Link href={`/${locale}/bookings`} className="text-primary-300 hover:text-white transition-colors">
                     {t('my_bookings') as string}
                   </Link>
                 )}
                 {user.role === 'barber' && (
-                  <Link href="/barber/dashboard" className="text-primary-300 hover:text-white transition-colors">
+                  <Link href={`/${locale}/barber/dashboard`} className="text-primary-300 hover:text-white transition-colors">
                     {t('dashboard') as string}
                   </Link>
                 )}
                 {user.role === 'admin' && (
-                  <Link href="/admin/dashboard" className="text-primary-300 hover:text-white transition-colors">
+                  <Link href={`/${locale}/admin/dashboard`} className="text-primary-300 hover:text-white transition-colors">
                     {t('admin') as string}
                   </Link>
                 )}

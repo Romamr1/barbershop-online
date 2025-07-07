@@ -2,12 +2,15 @@
 
 import Link from 'next/link';
 import { Barbershop } from '@/types';
+import { useLocale } from '@/lib/locale-context';
 
 interface BarbershopListProps {
   barbershops: Barbershop[];
 }
 
 export default function BarbershopList({ barbershops }: BarbershopListProps) {
+  const { locale } = useLocale();
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <svg
@@ -43,7 +46,7 @@ export default function BarbershopList({ barbershops }: BarbershopListProps) {
       {barbershops.map((barbershop) => (
         <Link
           key={barbershop.id}
-          href={`/barbershop/${barbershop.id}`}
+          href={`/${locale}/barbershop/${barbershop.id}`}
           className="card-hover group"
         >
           <div className="relative">

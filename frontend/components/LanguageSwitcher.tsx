@@ -1,11 +1,16 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from '@/lib/useTranslation';
+import { useLocale } from '@/lib/locale-context';
 import { supportedLanguages, languageNames, type SupportedLanguage } from '@/lib/i18n';
 
 export default function LanguageSwitcher() {
   const { t, i18n, ready } = useTranslation();
+  const { locale } = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -36,6 +41,11 @@ export default function LanguageSwitcher() {
       if (i18n && i18n.changeLanguage && ready) {
         i18n.changeLanguage(language);
         console.log('LanguageSwitcher: Language changed successfully');
+        
+        // Navigate to the same page with new locale
+        const currentPath = pathname.replace(`/${locale}`, '');
+        const newPath = `/${language}${currentPath}`;
+        router.push(newPath);
       } else {
         console.warn('LanguageSwitcher: i18n instance not available or not ready');
         console.log('i18n:', i18n);
