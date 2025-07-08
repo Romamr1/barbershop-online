@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/lib/api';
 import { setCurrentUser } from '@/lib/auth';
+import { useLocale } from '@/lib/locale-context';
 import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { locale } = useLocale();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -37,7 +39,7 @@ export default function RegisterPage() {
       });
       setCurrentUser(response.data.user);
       toast.success('Registration successful!');
-      router.push('/');
+      router.push(`/${locale}`);
     } catch (error: any) {
       console.error('Registration error:', error);
       toast.error(error.message || 'Registration failed');
@@ -65,7 +67,7 @@ export default function RegisterPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-primary-400">
             Or{' '}
-            <Link href="/login" className="font-medium text-accent-400 hover:text-accent-300">
+            <Link href={`/${locale}/login`} className="font-medium text-accent-400 hover:text-accent-300">
               sign in to your existing account
             </Link>
           </p>
@@ -169,11 +171,11 @@ export default function RegisterPage() {
 
           <div className="text-center text-sm text-primary-400">
             By creating an account, you agree to our{' '}
-            <Link href="/terms" className="text-accent-400 hover:text-accent-300">
+            <Link href={`/${locale}/terms`} className="text-accent-400 hover:text-accent-300">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link href="/privacy" className="text-accent-400 hover:text-accent-300">
+            <Link href={`/${locale}/privacy`} className="text-accent-400 hover:text-accent-300">
               Privacy Policy
             </Link>
           </div>
