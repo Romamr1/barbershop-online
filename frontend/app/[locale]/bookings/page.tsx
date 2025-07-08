@@ -5,8 +5,10 @@ import { BookingWithDetails } from '@/types';
 import { bookingApi } from '@/lib/api';
 import Header from '@/components/Header';
 import toast from 'react-hot-toast';
+import { useTranslation } from '@/lib/useTranslation';
 
 export default function BookingsPage() {
+  const { t } = useTranslation();
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +24,7 @@ export default function BookingsPage() {
       setBookings(bookingsData.data?.bookings || []);
     } catch (error) {
       console.error('Error loading bookings:', error);
-      toast.error('Failed to load bookings');
+      toast.error(t('failed_to_load_bookings') as string);
       setBookings([]);
     } finally {
       setLoading(false);
@@ -30,15 +32,15 @@ export default function BookingsPage() {
   };
 
   const handleCancelBooking = async (bookingId: string) => {
-    if (!confirm('Are you sure you want to cancel this booking?')) return;
+    if (!confirm(t('cancel_booking_confirmation') as string)) return;
 
     try {
       await bookingApi.cancel(bookingId);
-      toast.success('Booking cancelled successfully');
+      toast.success(t('booking_cancelled_successfully') as string);
       loadBookings(); // Reload bookings
     } catch (error: any) {
       console.error('Error cancelling booking:', error);
-      toast.error(error.message || 'Failed to cancel booking');
+      toast.error(error.message || t('failed_to_cancel_booking') as string);
     }
   };
 
@@ -74,9 +76,9 @@ export default function BookingsPage() {
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">My Bookings</h1>
+          <h1 className="text-4xl font-bold text-white mb-4">{t('my_bookings') as string}</h1>
           <p className="text-primary-300 text-lg">
-            View and manage your appointments
+            {t('view_and_manage_appointments') as string}
           </p>
         </div>
 
@@ -87,12 +89,12 @@ export default function BookingsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">No bookings yet</h3>
+            <h3 className="text-xl font-semibold text-white mb-2">{t('no_bookings_yet') as string}</h3>
             <p className="text-primary-400 mb-6">
-              You haven't made any appointments yet. Start by browsing our barbershops!
+              {t('no_bookings_yet_description') as string}
             </p>
             <a href="/" className="btn-primary">
-              Browse Barbershops
+              {t('browse_barbershops') as string}
             </a>
           </div>
         ) : (
@@ -103,20 +105,20 @@ export default function BookingsPage() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-xl font-semibold text-white">
-                        {booking.barbershop?.name || 'Unknown Barbershop'}
+                        {booking.barbershop?.name || t('unknown_barbershop') as string}
                       </h3>
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)} bg-primary-700`}>
-                        {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                        {t(booking.status) as string}
                       </span>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                       <div>
-                        <span className="text-primary-400 text-sm">Barber</span>
-                        <p className="text-white font-medium">{booking.barber.user?.name || 'Unknown'}</p>
+                        <span className="text-primary-400 text-sm">{t('barber') as string}</span>
+                        <p className="text-white font-medium">{booking.barber.user?.name || t('unknown') as string}</p>
                       </div>
                       <div>
-                        <span className="text-primary-400 text-sm">Date & Time</span>
+                        <span className="text-primary-400 text-sm">{t('date_time') as string}</span>
                         <p className="text-white font-medium">
                           {booking.startTime ? new Date(booking.startTime).toLocaleDateString('en-US', {
                             weekday: 'short',
@@ -134,21 +136,21 @@ export default function BookingsPage() {
                         </p>
                       </div>
                       <div>
-                        <span className="text-primary-400 text-sm">Services</span>
+                        <span className="text-primary-400 text-sm">{t('services') as string}</span>
                         <p className="text-white font-medium">
-                          {Array.isArray(booking.services) ? booking.services.map(s => s.name).join(', ') : 'No services'}
+                          {Array.isArray(booking.services) ? booking.services.map(s => s.name).join(', ') : t('no_services') as string}
                         </p>
                       </div>
                       <div>
-                        <span className="text-primary-400 text-sm">Total</span>
+                        <span className="text-primary-400 text-sm">{t('total') as string}</span>
                         <p className="text-accent-400 font-semibold">${booking.totalPrice || 0}</p>
-                        <p className="text-primary-300 text-sm">{booking.totalDuration || 0} min</p>
+                        <p className="text-primary-300 text-sm">{booking.totalDuration || 0} {t('min') as string}</p>
                       </div>
                     </div>
 
                     {booking.notes && (
                       <div className="mb-4">
-                        <span className="text-primary-400 text-sm">Notes</span>
+                        <span className="text-primary-400 text-sm">{t('notes') as string}</span>
                         <p className="text-white">{booking.notes}</p>
                       </div>
                     )}
@@ -160,14 +162,14 @@ export default function BookingsPage() {
                         onClick={() => handleCancelBooking(booking.id)}
                         className="btn-outline text-sm"
                       >
-                        Cancel Booking
+                        {t('cancel_booking') as string}
                       </button>
                     )}
                     <a
                       href={`/barbershop/${booking.barbershop?.id || '#'}`}
                       className="btn-secondary text-sm"
                     >
-                      View Barbershop
+                      {t('view_barbershop') as string}
                     </a>
                   </div>
                 </div>

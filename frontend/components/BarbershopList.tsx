@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Barbershop } from '@/types';
 import { useLocale } from '@/lib/locale-context';
+import { useTranslation } from '@/lib/useTranslation';
 
 interface BarbershopListProps {
   barbershops: Barbershop[];
@@ -10,6 +11,7 @@ interface BarbershopListProps {
 
 export default function BarbershopList({ barbershops }: BarbershopListProps) {
   const { locale } = useLocale();
+  const { t } = useTranslation();
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -69,7 +71,7 @@ export default function BarbershopList({ barbershops }: BarbershopListProps) {
 
             {/* Type Badge */}
             <div className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium text-white ${getTypeColor(barbershop.type)}`}>
-              {barbershop.type.charAt(0).toUpperCase() + barbershop.type.slice(1)}
+              {t(barbershop.type) as string}
             </div>
 
             {/* Rating Badge */}
@@ -98,7 +100,7 @@ export default function BarbershopList({ barbershops }: BarbershopListProps) {
               <div className="flex items-center space-x-1">
                 {renderStars(barbershop.rating)}
                 <span className="text-primary-400 text-sm ml-1">
-                  ({barbershop.reviewCount} reviews)
+                  ({barbershop.reviewCount} {t('reviews') as string})
                 </span>
               </div>
             </div>
@@ -111,7 +113,7 @@ export default function BarbershopList({ barbershops }: BarbershopListProps) {
             {/* Book Now Button */}
             <div className="mt-4">
               <span className="inline-flex items-center text-accent-400 text-sm font-medium group-hover:text-accent-300 transition-colors">
-                Book Now
+                {t('book_now') as string}
                 <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

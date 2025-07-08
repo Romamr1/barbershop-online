@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/useTranslation';
+
 interface FilterBarProps {
   filters: {
     type: string;
@@ -12,6 +14,8 @@ interface FilterBarProps {
 }
 
 export default function FilterBar({ filters, onFilterChange, viewMode, onViewModeChange }: FilterBarProps) {
+  const { t } = useTranslation();
+
   const handleTypeChange = (type: string) => {
     onFilterChange({ ...filters, type: filters.type === type ? '' : type });
   };
@@ -31,7 +35,7 @@ export default function FilterBar({ filters, onFilterChange, viewMode, onViewMod
         <div className="flex flex-wrap items-center gap-4">
           {/* Type Filter */}
           <div className="flex items-center space-x-2">
-            <span className="text-primary-300 text-sm font-medium">Type:</span>
+            <span className="text-primary-300 text-sm font-medium">{t('type') as string}:</span>
             <div className="flex space-x-2">
               {['male', 'female', 'premium', 'family'].map((type) => (
                 <button
@@ -43,7 +47,7 @@ export default function FilterBar({ filters, onFilterChange, viewMode, onViewMod
                       : 'bg-primary-700 text-primary-300 hover:bg-primary-600'
                   }`}
                 >
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                  {t(type) as string}
                 </button>
               ))}
             </div>
@@ -51,10 +55,10 @@ export default function FilterBar({ filters, onFilterChange, viewMode, onViewMod
 
           {/* Location Filter */}
           <div className="flex items-center space-x-2">
-            <span className="text-primary-300 text-sm font-medium">Location:</span>
+            <span className="text-primary-300 text-sm font-medium">{t('location') as string}:</span>
             <input
               type="text"
-              placeholder="Enter location..."
+              placeholder={t('enter_location') as string}
               value={filters.location}
               onChange={(e) => handleLocationChange(e.target.value)}
               className="input text-sm w-40"
@@ -63,7 +67,7 @@ export default function FilterBar({ filters, onFilterChange, viewMode, onViewMod
 
           {/* Rating Filter */}
           <div className="flex items-center space-x-2">
-            <span className="text-primary-300 text-sm font-medium">Min Rating:</span>
+            <span className="text-primary-300 text-sm font-medium">{t('min_rating') as string}:</span>
             <div className="flex space-x-1">
               {[1, 2, 3, 4, 5].map((rating) => (
                 <button
@@ -86,7 +90,7 @@ export default function FilterBar({ filters, onFilterChange, viewMode, onViewMod
 
         {/* View Mode Toggle */}
         <div className="flex items-center space-x-2">
-          <span className="text-primary-300 text-sm font-medium">View:</span>
+          <span className="text-primary-300 text-sm font-medium">{t('view') as string}:</span>
           <div className="flex bg-primary-700 rounded-lg p-1">
             <button
               onClick={() => onViewModeChange('list')}
