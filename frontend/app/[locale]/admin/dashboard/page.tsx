@@ -4,9 +4,14 @@ import { useState, useEffect } from 'react';
 import { Barbershop, BookingWithDetails } from '@/types';
 import { barbershopApi, bookingApi } from '@/lib/api';
 import Header from '@/components/Header';
+import { useTranslation } from '@/lib/useTranslation';
+import { useLocale } from '@/lib/locale-context';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
+  const { locale } = useLocale();
   const [barbershops, setBarbershops] = useState<Barbershop[]>([]);
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +33,7 @@ export default function AdminDashboard() {
       setBookings(bookingsData.data?.bookings || []);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
-      toast.error('Failed to load dashboard data');
+      toast.error(t('failed_to_load_dashboard_data') as string);
       setBookings([]);
       setBarbershops([]);
     } finally {
@@ -80,9 +85,9 @@ export default function AdminDashboard() {
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">Admin Dashboard</h1>
+          <h1 className="text-4xl font-bold text-white mb-4">{t('admin_dashboard') as string}</h1>
           <p className="text-primary-300 text-lg">
-            Manage your barbershop operations
+            {t('manage_barbershop_operations') as string}
           </p>
         </div>
 
@@ -96,7 +101,7 @@ export default function AdminDashboard() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-primary-400 text-sm">Total Bookings</p>
+                <p className="text-primary-400 text-sm">{t('total_bookings') as string}</p>
                 <p className="text-2xl font-bold text-white">{stats.totalBookings}</p>
               </div>
             </div>
@@ -110,7 +115,7 @@ export default function AdminDashboard() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-primary-400 text-sm">Pending</p>
+                <p className="text-primary-400 text-sm">{t('pending') as string}</p>
                 <p className="text-2xl font-bold text-white">{stats.pendingBookings}</p>
               </div>
             </div>
@@ -124,7 +129,7 @@ export default function AdminDashboard() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-primary-400 text-sm">Completed</p>
+                <p className="text-primary-400 text-sm">{t('completed') as string}</p>
                 <p className="text-2xl font-bold text-white">{stats.completedBookings}</p>
               </div>
             </div>
@@ -138,7 +143,7 @@ export default function AdminDashboard() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-primary-400 text-sm">Revenue</p>
+                <p className="text-primary-400 text-sm">{t('revenue') as string}</p>
                 <p className="text-2xl font-bold text-white">${stats.totalRevenue}</p>
               </div>
             </div>
@@ -147,18 +152,18 @@ export default function AdminDashboard() {
 
         {/* Recent Bookings */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Recent Bookings</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('recent_bookings') as string}</h2>
           <div className="card">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-primary-700">
-                    <th className="text-left p-4 text-primary-300">Client</th>
-                    <th className="text-left p-4 text-primary-300">Barbershop</th>
-                    <th className="text-left p-4 text-primary-300">Barber</th>
-                    <th className="text-left p-4 text-primary-300">Date</th>
-                    <th className="text-left p-4 text-primary-300">Status</th>
-                    <th className="text-left p-4 text-primary-300">Total</th>
+                    <th className="text-left p-4 text-primary-300">{t('client') as string}</th>
+                    <th className="text-left p-4 text-primary-300">{t('barbershop') as string}</th>
+                    <th className="text-left p-4 text-primary-300">{t('barber') as string}</th>
+                    <th className="text-left p-4 text-primary-300">{t('date') as string}</th>
+                    <th className="text-left p-4 text-primary-300">{t('status') as string}</th>
+                    <th className="text-left p-4 text-primary-300">{t('total') as string}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -166,12 +171,12 @@ export default function AdminDashboard() {
                     <tr key={booking.id} className="border-b border-primary-700">
                       <td className="p-4">
                         <div>
-                          <p className="text-white font-medium">{booking.client?.name || 'Unknown'}</p>
-                          <p className="text-primary-400 text-sm">{booking.clientPhone || 'N/A'}</p>
+                          <p className="text-white font-medium">{booking.client?.name || t('unknown_client') as string}</p>
+                          <p className="text-primary-400 text-sm">{booking.clientPhone || t('no_phone') as string}</p>
                         </div>
                       </td>
-                      <td className="p-4 text-white">{booking.barbershop?.name || 'Unknown'}</td>
-                      <td className="p-4 text-white">{booking.barber?.user?.name || 'Unknown'}</td>
+                      <td className="p-4 text-white">{booking.barbershop?.name || t('unknown_client') as string}</td>
+                      <td className="p-4 text-white">{booking.barber?.user?.name || t('unknown_client') as string}</td>
                       <td className="p-4">
                         <p className="text-white">
                           {booking.startTime ? new Date(booking.startTime).toLocaleDateString() : 'N/A'}
@@ -187,7 +192,7 @@ export default function AdminDashboard() {
                           booking.status === 'completed' ? 'bg-blue-600 text-white' :
                           'bg-red-600 text-white'
                         }`}>
-                          {booking.status ? booking.status.charAt(0).toUpperCase() + booking.status.slice(1) : 'Unknown'}
+                          {booking.status ? t(booking.status) as string : t('unknown_client') as string}
                         </span>
                       </td>
                       <td className="p-4 text-accent-400 font-semibold">${booking.totalPrice || 0}</td>
@@ -196,7 +201,7 @@ export default function AdminDashboard() {
                   {(!Array.isArray(bookings) || bookings.length === 0) && (
                     <tr>
                       <td colSpan={6} className="p-4 text-center text-primary-400">
-                        No bookings found
+                        {t('no_bookings_found') as string}
                       </td>
                     </tr>
                   )}
@@ -208,33 +213,33 @@ export default function AdminDashboard() {
 
         {/* Barbershops */}
         <div>
-          <h2 className="text-2xl font-bold text-white mb-4">Barbershops</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('barbershops') as string}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.isArray(barbershops) && barbershops.map((barbershop) => (
               <div key={barbershop.id} className="card p-6">
-                <h3 className="text-lg font-semibold text-white mb-2">{barbershop.name || 'Unknown'}</h3>
-                <p className="text-primary-400 text-sm mb-4">{barbershop.address || 'No address'}</p>
+                <h3 className="text-lg font-semibold text-white mb-2">{barbershop.name || t('unknown_client') as string}</h3>
+                <p className="text-primary-400 text-sm mb-4">{barbershop.address || t('no_phone') as string}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <span className="px-2 py-1 bg-accent-600 text-white text-xs rounded-full">
-                      {barbershop.type || 'Unknown'}
+                      {barbershop.type || t('unknown_client') as string}
                     </span>
                     <span className="text-primary-400 text-sm">
                       ⭐ {barbershop.rating ? barbershop.rating.toFixed(1) : '0.0'}
                     </span>
                   </div>
-                  <a
-                    href={`/barbershop/${barbershop.id}`}
+                  <Link
+                    href={`/${locale}/barbershop/${barbershop.id}`}
                     className="text-accent-400 hover:text-accent-300 text-sm"
                   >
-                    View Details →
-                  </a>
+                    {t('view_details') as string} →
+                  </Link>
                 </div>
               </div>
             ))}
             {(!Array.isArray(barbershops) || barbershops.length === 0) && (
               <div className="col-span-full text-center text-primary-400 py-8">
-                No barbershops found
+                {t('no_barbershops_found') as string}
               </div>
             )}
           </div>

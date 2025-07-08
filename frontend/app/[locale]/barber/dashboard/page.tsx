@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import { BookingWithDetails } from '@/types';
 import { bookingApi } from '@/lib/api';
 import Header from '@/components/Header';
+import { useTranslation } from '@/lib/useTranslation';
 import toast from 'react-hot-toast';
 
 export default function BarberDashboard() {
+  const { t } = useTranslation();
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +25,7 @@ export default function BarberDashboard() {
       setBookings(bookingsData.data?.bookings || []);
     } catch (error) {
       console.error('Error loading bookings:', error);
-      toast.error('Failed to load bookings');
+      toast.error(t('failed_to_load_bookings') as string);
       setBookings([]);
     } finally {
       setLoading(false);
@@ -73,9 +75,9 @@ export default function BarberDashboard() {
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">Barber Dashboard</h1>
+          <h1 className="text-4xl font-bold text-white mb-4">{t('dashboard') as string}</h1>
           <p className="text-primary-300 text-lg">
-            Manage your appointments and schedule
+            {t('manage_your_appointments_and_schedule') as string}
           </p>
         </div>
 
@@ -89,7 +91,7 @@ export default function BarberDashboard() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-primary-400 text-sm">Today's Appointments</p>
+                <p className="text-primary-400 text-sm">{t('todays_appointments') as string}</p>
                 <p className="text-2xl font-bold text-white">{todayBookings.length}</p>
               </div>
             </div>
@@ -103,7 +105,7 @@ export default function BarberDashboard() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-primary-400 text-sm">Upcoming</p>
+                <p className="text-primary-400 text-sm">{t('upcoming') as string}</p>
                 <p className="text-2xl font-bold text-white">{upcomingBookings.length}</p>
               </div>
             </div>
@@ -117,7 +119,7 @@ export default function BarberDashboard() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-primary-400 text-sm">Completed Today</p>
+                <p className="text-primary-400 text-sm">{t('completed_today') as string}</p>
                 <p className="text-2xl font-bold text-white">
                   {Array.isArray(bookings) ? bookings.filter(b => 
                     b.startTime && new Date(b.startTime).toDateString() === new Date().toDateString() && 
@@ -131,7 +133,7 @@ export default function BarberDashboard() {
 
         {/* Today's Appointments */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Today's Appointments</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('todays_appointments') as string}</h2>
           {todayBookings.length === 0 ? (
             <div className="card p-8 text-center">
               <div className="w-16 h-16 bg-primary-700 rounded-full mx-auto mb-4 flex items-center justify-center">
@@ -139,8 +141,8 @@ export default function BarberDashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">No appointments today</h3>
-              <p className="text-primary-400">You're all caught up!</p>
+              <h3 className="text-lg font-semibold text-white mb-2">{t('no_appointments_today') as string}</h3>
+              <p className="text-primary-400">{t('you_are_all_caught_up') as string}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -154,10 +156,10 @@ export default function BarberDashboard() {
                         </span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white">{booking.client?.name || 'Unknown Client'}</h3>
-                        <p className="text-primary-400">{booking.clientPhone || 'No phone'}</p>
+                        <h3 className="text-lg font-semibold text-white">{booking.client?.name || t('unknown_client') as string}</h3>
+                        <p className="text-primary-400">{booking.clientPhone || t('no_phone') as string}</p>
                         <p className="text-primary-300 text-sm">
-                          {Array.isArray(booking.services) ? booking.services.map(s => s.name).join(', ') : 'No services'}
+                          {Array.isArray(booking.services) ? booking.services.map(s => s.name).join(', ') : t('no_services') as string}
                         </p>
                       </div>
                     </div>
@@ -169,14 +171,14 @@ export default function BarberDashboard() {
                           hour12: true
                         }) : 'N/A'}
                       </p>
-                      <p className="text-primary-400 text-sm">{booking.totalDuration || 0} min</p>
+                      <p className="text-primary-400 text-sm">{booking.totalDuration || 0} {t('min') as string}</p>
                       <p className="text-accent-400 font-semibold">${booking.totalPrice || 0}</p>
                     </div>
                   </div>
                   {booking.notes && (
                     <div className="mt-4 p-3 bg-primary-700 rounded-lg">
                       <p className="text-primary-300 text-sm">
-                        <span className="font-medium">Notes:</span> {booking.notes}
+                        <span className="font-medium">{t('notes') as string}:</span> {booking.notes}
                       </p>
                     </div>
                   )}
@@ -188,7 +190,7 @@ export default function BarberDashboard() {
 
         {/* Upcoming Appointments */}
         <div>
-          <h2 className="text-2xl font-bold text-white mb-4">Upcoming Appointments</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('upcoming_appointments') as string}</h2>
           {upcomingBookings.length === 0 ? (
             <div className="card p-8 text-center">
               <div className="w-16 h-16 bg-primary-700 rounded-full mx-auto mb-4 flex items-center justify-center">
@@ -196,8 +198,8 @@ export default function BarberDashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">No upcoming appointments</h3>
-              <p className="text-primary-400">You're all set for now!</p>
+              <h3 className="text-lg font-semibold text-white mb-2">{t('no_upcoming_appointments') as string}</h3>
+              <p className="text-primary-400">{t('you_are_all_set_for_now') as string}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -211,15 +213,15 @@ export default function BarberDashboard() {
                         </span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white">{booking.client?.name || 'Unknown Client'}</h3>
-                        <p className="text-primary-400">{booking.clientPhone || 'No phone'}</p>
+                        <h3 className="text-lg font-semibold text-white">{booking.client?.name || t('unknown_client') as string}</h3>
+                        <p className="text-primary-400">{booking.clientPhone || t('no_phone') as string}</p>
                         <p className="text-primary-300 text-sm">
                           {booking.startTime ? new Date(booking.startTime).toLocaleDateString('en-US', {
                             weekday: 'long',
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
-                          }) : 'No date'}
+                          }) : t('no_phone') as string}
                         </p>
                       </div>
                     </div>
@@ -231,7 +233,7 @@ export default function BarberDashboard() {
                           hour12: true
                         }) : 'N/A'}
                       </p>
-                      <p className="text-primary-400 text-sm">{booking.totalDuration || 0} min</p>
+                      <p className="text-primary-400 text-sm">{booking.totalDuration || 0} {t('min') as string}</p>
                       <p className="text-accent-400 font-semibold">${booking.totalPrice || 0}</p>
                     </div>
                   </div>
