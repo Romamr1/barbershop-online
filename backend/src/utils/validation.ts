@@ -54,6 +54,26 @@ export const createBarberSchema = z.object({
   workingHours: z.record(z.any()),
 });
 
+export const createBarberWithUserSchema = z.object({
+  // User details
+  name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name too long'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  phone: z.string().optional(),
+  
+  // Barber details
+  barberShopId: z.string().uuid('Invalid barbershop ID'),
+  bio: z.string().optional(),
+  avatar: z.string().url().optional(),
+  specialties: z.array(z.string()).optional(),
+  workingHours: z.record(z.any()).optional(),
+});
+
+export const assignUserAsBarberSchema = z.object({
+  userId: z.string().uuid('Invalid user ID'),
+  barberShopId: z.string().uuid('Invalid barbershop ID'),
+});
+
 export const updateBarberSchema = createBarberSchema.partial();
 
 // Booking validation schemas

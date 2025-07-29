@@ -17,6 +17,9 @@ export interface AuthTokens {
 // Request types
 export interface AuthenticatedRequest extends Request {
   user?: UserPayload;
+  body: any;
+  params: any;
+  query: any;
 }
 
 // Response types
