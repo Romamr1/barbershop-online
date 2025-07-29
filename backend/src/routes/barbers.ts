@@ -16,16 +16,18 @@ const router = Router();
 
 // Public routes (no authentication required)
 router.get('/', getBarbers);
-router.get('/:id', getBarberById);
 
 // Protected routes (authentication required)
 router.use(requireAuth);
 
-// Admin/Barbershop owner routes
+// Admin/Barbershop owner routes - specific routes first
 router.get('/available-users', requireRole(['admin', 'superadmin']), getAvailableUsersForBarber);
-router.post('/', requireRole(['admin', 'superadmin']), createBarber);
 router.post('/with-user', requireRole(['admin', 'superadmin']), createBarberWithUser);
 router.post('/assign-user', requireRole(['admin', 'superadmin']), assignUserAsBarber);
+
+// Parameterized routes last
+router.get('/:id', getBarberById);
+router.post('/', requireRole(['admin', 'superadmin']), createBarber);
 router.put('/:id', requireRole(['admin', 'superadmin']), updateBarber);
 router.delete('/:id', requireRole(['admin', 'superadmin']), deleteBarber);
 

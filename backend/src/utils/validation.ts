@@ -64,7 +64,7 @@ export const createBarberWithUserSchema = z.object({
   // Barber details
   barberShopId: z.string().uuid('Invalid barbershop ID'),
   bio: z.string().optional(),
-  avatar: z.string().url().optional(),
+  avatar: z.string().url('Invalid avatar URL').optional().or(z.literal('')),
   specialties: z.array(z.string()).optional(),
   workingHours: z.record(z.any()).optional(),
 });

@@ -145,6 +145,11 @@ export const barberApi = {
   getAll: (barbershopId?: string) => apiGet<ApiResponse<any[]>>('/barbers', { barbershopId }),
   getById: (id: string) => apiGet<ApiResponse<any>>(`/barbers/${id}`),
   create: (data: any) => apiPost<ApiResponse<any>>('/barbers', data),
+  createWithUser: (data: any) => apiPost<ApiResponse<any>>('/barbers/with-user', data),
+  assignUserAsBarber: (data: { userId: string; barberShopId: string }) => 
+    apiPost<ApiResponse<any>>('/barbers/assign-user', data),
+  getAvailableUsers: (barbershopId: string) => 
+    apiGet<ApiResponse<any[]>>('/barbers/available-users', { barbershopId }),
   update: (id: string, data: any) => apiPut<ApiResponse<any>>(`/barbers/${id}`, data),
   delete: (id: string) => apiDelete<ApiResponse<null>>(`/barbers/${id}`),
 };

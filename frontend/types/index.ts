@@ -59,6 +59,12 @@ export interface Barber {
   user?: {
     name: string;
     email: string;
+    phone?: string;
+  };
+  barberShop?: {
+    id: string;
+    name: string;
+    address: string;
   };
   services?: Service[];
   createdAt: string;

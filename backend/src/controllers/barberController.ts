@@ -4,9 +4,8 @@ import { validateSchema } from '../utils/validation';
 import { createBarberSchema, updateBarberSchema, createBarberWithUserSchema, assignUserAsBarberSchema } from '../utils/validation';
 import { CustomError } from '../middlewares/errorHandler';
 import { hashPassword } from '../utils/password';
-import { AuthenticatedRequest } from '../types';
 
-export const createBarberWithUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const createBarberWithUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const validatedData = validateSchema(createBarberWithUserSchema, req.body);
 
@@ -64,8 +63,8 @@ export const createBarberWithUser = async (req: AuthenticatedRequest, res: Respo
         data: {
           userId: user.id,
           barberShopId: validatedData.barberShopId,
-          bio: validatedData.bio,
-          avatar: validatedData.avatar,
+          bio: validatedData.bio || '',
+          avatar: validatedData.avatar || null,
           specialties: JSON.stringify(validatedData.specialties || []),
           workingHours: JSON.stringify(validatedData.workingHours || {}),
         },
@@ -113,7 +112,7 @@ export const createBarberWithUser = async (req: AuthenticatedRequest, res: Respo
   }
 };
 
-export const createBarber = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const createBarber = async (req: Request, res: Response): Promise<void> => {
   try {
     const validatedData = validateSchema(createBarberSchema, req.body);
 
@@ -446,7 +445,7 @@ export const getAvailableUsersForBarber = async (req: Request, res: Response): P
   }
 };
 
-export const assignUserAsBarber = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const assignUserAsBarber = async (req: Request, res: Response): Promise<void> => {
   try {
     const validatedData = validateSchema(assignUserAsBarberSchema, req.body);
 
@@ -550,7 +549,7 @@ export const assignUserAsBarber = async (req: AuthenticatedRequest, res: Respons
   }
 };
 
-export const deleteBarber = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const deleteBarber = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 

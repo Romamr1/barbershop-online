@@ -85,10 +85,22 @@ export default function AdminDashboard() {
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">{t('admin_dashboard') as string}</h1>
-          <p className="text-primary-300 text-lg">
-            {t('manage_barbershop_operations') as string}
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-4">{t('admin_dashboard') as string}</h1>
+              <p className="text-primary-300 text-lg">
+                {t('manage_barbershop_operations') as string}
+              </p>
+            </div>
+            <div className="flex space-x-4">
+              <Link
+                href={`/${locale}/admin/barbers`}
+                className="btn-primary"
+              >
+                {t('manage_barbers') as string}
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Stats Cards */}
